@@ -5,8 +5,8 @@
 ##########################################################
 COMPILER = g++ --std=c++11
 
-sim_cache: driver.o simulator.o cache.o
-	$(COMPILER) driver.o simulator.o cache.o -o sim_cache
+cache_simulator: driver.o simulator.o cache.o
+	$(COMPILER) driver.o simulator.o cache.o -o cache_simulator
 
 driver.o: driver.cpp
 	$(COMPILER) -c driver.cpp

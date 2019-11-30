@@ -22,3 +22,29 @@ Simulator::Simulator(fstream& config) {
     return;
 }
 
+/***************************************
+ * Func: execute()
+ * Desc: Executes instruction that is
+ *       inputted. Returns true if success. */
+bool execute(char const& instr, string const& addr) {
+    long long size, address, comma_pos = addr.find(',');
+    if (comma_pos != string::npos) {
+        string str_size = addr.substr(comma_pos+1);
+        if (str_size.length() == 0) return false;
+        try {
+            size = atoi(str_size.c_str());
+        } catch (exception &e) {
+            cerr << "simulator, execute: Bad atoi" << endl;
+            return false;
+        }
+        string just_addr = addr.substr(0, comma_pos);
+        address = stoull(just_addr, nullptr, 16);
+    } else return false;
+   
+    if (instr == 'S') return store(address, size);
+    else if (instr == 'L') return load(address, size);
+    else if (instr == 'M') return modify(address, size);
+    return false;
+}
+
+

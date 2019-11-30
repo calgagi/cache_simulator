@@ -22,3 +22,10 @@ bool Cache::setup(fstream& config) {
     return true;
 }
 
+/****************************************
+ * Getters and Setters
+ */
+int cycles() {
+    return this->cycles;
+}
+

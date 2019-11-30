@@ -9,7 +9,6 @@
  * Func: main
  * In: Configuration file path, trace_file path
  * Out: Output file where name = "trace_file.out" */
-
 int main(int argc, char** argv) {
     // Input check
     if (argc != 3) {
@@ -35,8 +34,14 @@ int main(int argc, char** argv) {
         char instruction;
         string address;
         while (true) {
-            trace >> instruction >> address;
+            trace >> instruction;
             if (trace.fail()) break;
+            // If comment or instruction load, no operation on cache
+            if (instruction == '=' || instruction == 'I') {
+                getline(trace, address);
+                continue;
+            }
+            trace >> address; 
             if (!simulator.execute(instruction, address)) {
                 cerr << "driver, main: Instruction failed: " << instruction << ", " << address << endl;
                 return 0;

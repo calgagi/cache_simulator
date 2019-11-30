@@ -22,6 +22,7 @@ class Cache {
 
     public:
         bool setup(fstream&);
+        int cycles();
 };
 
 
@@ -39,4 +40,7 @@ class Simulator {
         Simulator(fstream&);
         bool execute(char const&, string const&);
         bool create_output(string const&);
+        bool store(long long address, long long size);
+        bool load(long long address, long long size);
+        bool modify(long long address, long long size);
 };
