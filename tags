@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+COMPILER	Makefile	/^COMPILER = g++ --std=c++11$/;"	m
+Cache	header.hpp	/^class Cache {$/;"	c
+Simulator	header.hpp	/^class Simulator {$/;"	c
+Simulator	simulator.cpp	/^Simulator::Simulator(fstream& config) {$/;"	f	class:Simulator
+access_cycles	header.hpp	/^        int access_cycles;$/;"	m	class:Cache
+associativity	header.hpp	/^        int associativity;$/;"	m	class:Cache
+block_size	header.hpp	/^        int block_size;$/;"	m	class:Cache
+caches	header.hpp	/^        vector<Cache> caches;$/;"	m	class:Simulator
+complete	simulator.cpp	/^void complete() {$/;"	f
+cycles	cache.cpp	/^int cycles() {$/;"	f
+execute	simulator.cpp	/^bool execute(string const& line, char const& instr, string const& addr) {$/;"	f
+main	driver.cpp	/^int main(int argc, char** argv) {$/;"	f
+main_mem_access_cycles	header.hpp	/^        long long main_mem_access_cycles;$/;"	m	class:Simulator
+num_caches	header.hpp	/^        int num_caches;$/;"	m	class:Simulator
+num_sets	header.hpp	/^        int num_sets;$/;"	m	class:Cache
+output	header.hpp	/^        fstream output;$/;"	m	class:Simulator
+replacement_policy	header.hpp	/^        bool replacement_policy;$/;"	m	class:Cache
+setup	cache.cpp	/^bool Cache::setup(fstream& config) {$/;"	f	class:Cache
+write_policy	header.hpp	/^        bool write_policy;$/;"	m	class:Cache

@@ -14,11 +14,10 @@ Simulator::Simulator(fstream& config) {
     config >> num_caches;
     config >> main_mem_access_cycles;
     caches.resize(num_caches);
-    for (Cache& c : caches)
-        if (!c.setup(config)) {
-            cerr << "simulator: constructor: Bad config file input" << endl;
-            exit(0);
-        }
+    if (!cache.setup(config)) {
+        cerr << "simulator: constructor: Bad config file input" << endl;
+        exit(0);
+    }
     return;
 }
 
@@ -26,25 +25,39 @@ Simulator::Simulator(fstream& config) {
  * Func: execute()
  * Desc: Executes instruction that is
  *       inputted. Returns true if success. */
-bool execute(char const& instr, string const& addr) {
+bool execute(string const& line, char const& instr, string const& addr) {
     long long size, address, comma_pos = addr.find(',');
     if (comma_pos != string::npos) {
-        string str_size = addr.substr(comma_pos+1);
-        if (str_size.length() == 0) return false;
-        try {
-            size = atoi(str_size.c_str());
-        } catch (exception &e) {
-            cerr << "simulator, execute: Bad atoi" << endl;
-            return false;
-        }
         string just_addr = addr.substr(0, comma_pos);
         address = stoull(just_addr, nullptr, 16);
     } else return false;
-   
-    if (instr == 'S') return store(address, size);
-    else if (instr == 'L') return load(address, size);
-    else if (instr == 'M') return modify(address, size);
-    return false;
+
+    output << line << " ";
+    if (instr == 'S') store(address);
+    else if (instr == 'L') load(address);
+    else if (instr == 'M') modify(address);
+    return true;
 }
 
+/***************************************
+ * Func: complete()
+ * Desc: Completes the program by printing 
+ *       simulation summary. */
+void complete() {
+    output << "L" << i << " Cache: ";
+    output << "Hits: " << caches[i].hits() << " ";
+    output << "Misses: " << caches[i].misses() << " ";
+    output << "Evictions: " << caches[i].evictions() << " ";
+    output << endl;
+    output << "Cycles:" << this->cycles << " ";
+    output << "Reads:" << this->reads << " " ;
+    output << "Writes: " << this->writes << " ";
+    output << endl;
+}
 
+/**************************************
+ * Func: store()
+ * Desc: Performs store operation at the
+ *       given address. */
+void store(long long address) {
+    

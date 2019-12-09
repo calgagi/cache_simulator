@@ -32,21 +32,24 @@ int main(int argc, char** argv) {
         }
 
         char instruction;
-        string address;
+        string address, line;
         while (true) {
-            trace >> instruction;
+            getline(trace, line);
             if (trace.fail()) break;
+            for (int i = 0; i < line.length(); i++)
+                if (line[i] != ' ') {
+                    instruction = line[i];
+                    address = line.substr(i+2); 
+                    break;
+                }
             // If comment or instruction load, no operation on cache
-            if (instruction == '=' || instruction == 'I') {
-                getline(trace, address);
-                continue;
-            }
-            trace >> address; 
-            if (!simulator.execute(instruction, address)) {
+            if (instruction == '=' || instruction == 'I') continue;
+            if (!simulator.execute(line, instruction, address)) {
                 cerr << "driver, main: Instruction failed: " << instruction << ", " << address << endl;
                 return 0;
             }
         }
+        simulator.complete();
     } else {
         cerr << "driver, main: Could not open input file(s)" << endl;
     }
