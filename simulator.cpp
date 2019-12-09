@@ -13,7 +13,7 @@
 Simulator::Simulator(fstream& config) {
     config >> num_caches;
     config >> main_mem_access_cycles;
-    caches.resize(num_caches);
+    total_writes = total_reads = total_cycles = 0;
     if (!cache.setup(config)) {
         cerr << "simulator: constructor: Bad config file input" << endl;
         exit(0);
@@ -21,11 +21,22 @@ Simulator::Simulator(fstream& config) {
     return;
 }
 
+
+/***************************************
+ * Func: create_output()
+ * Desc: Creates output fstream object for
+ *       output. */
+bool Simulator::create_output(string const& filename) {
+    output.open(filename, fstream::out);
+    return output.is_open();
+}
+
+
 /***************************************
  * Func: execute()
  * Desc: Executes instruction that is
  *       inputted. Returns true if success. */
-bool execute(string const& line, char const& instr, string const& addr) {
+bool Simulator::execute(string const& line, char const& instr, string const& addr) {
     long long size, address, comma_pos = addr.find(',');
     if (comma_pos != string::npos) {
         string just_addr = addr.substr(0, comma_pos);
@@ -33,9 +44,9 @@ bool execute(string const& line, char const& instr, string const& addr) {
     } else return false;
 
     output << line << " ";
-    if (instr == 'S') store(address);
-    else if (instr == 'L') load(address);
-    else if (instr == 'M') modify(address);
+    if (instr == 'S') cache.store(address);
+    else if (instr == 'L') cache.load(address);
+    else if (instr == 'M') cache.modify(address);
     return true;
 }
 
@@ -43,21 +54,16 @@ bool execute(string const& line, char const& instr, string const& addr) {
  * Func: complete()
  * Desc: Completes the program by printing 
  *       simulation summary. */
-void complete() {
-    output << "L" << i << " Cache: ";
-    output << "Hits: " << caches[i].hits() << " ";
-    output << "Misses: " << caches[i].misses() << " ";
-    output << "Evictions: " << caches[i].evictions() << " ";
+void Simulator::complete() {
+    output << "L1"  << " Cache: ";
+    output << "Hits: " << cache.get_hits() << " ";
+    output << "Misses: " << cache.get_misses() << " ";
+    output << "Evictions: " << cache.get_evictions() << " ";
     output << endl;
-    output << "Cycles:" << this->cycles << " ";
-    output << "Reads:" << this->reads << " " ;
-    output << "Writes: " << this->writes << " ";
+    output << "Cycles:" << this->total_cycles << " ";
+    output << "Reads:" << this->total_reads << " " ;
+    output << "Writes: " << this->total_writes << " ";
     output << endl;
 }
 
-/**************************************
- * Func: store()
- * Desc: Performs store operation at the
- *       given address. */
-void store(long long address) {
-    
+   

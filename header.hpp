@@ -51,12 +51,20 @@ class Cache {
         int access_cycles;
 
         // Summary vars
+        long long hits, misses, evictions;
 
-        
+        // O(1) caches by index
+        vector<LRU_Cache> index;
 
     public:
         bool setup(fstream&);
         int cycles();
+        void load(long long);
+        void modify(long long);
+        void store(long long);
+        long long get_hits();
+        long long get_misses();
+        long long get_evictions();
 };
 
 
@@ -69,14 +77,12 @@ class Simulator {
         long long main_mem_access_cycles;
         Cache cache;
         fstream output;
+        int total_writes, total_cycles, total_reads;
 
     public:
         Simulator(fstream&);
         bool execute(string const&, char const&, string const&);
         bool create_output(string const&);
-        void store(long long, long long);
-        void load(long long, long long);
-        void modify(long long, long long);
         void complete();
 };
 

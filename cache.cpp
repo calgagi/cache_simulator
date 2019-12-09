@@ -22,10 +22,34 @@ bool Cache::setup(fstream& config) {
     return true;
 }
 
-/****************************************
- * Getters and Setters
- */
-int cycles() {
-    return this->cycles;
+/**************************************
+ * Func: store()
+ * Desc: Performs store operation at the
+ *       given address. */
+void Cache::store(long long address) {}
+ 
+/**************************************
+ * Func: load()
+ * Desc: Performs load operation at the
+ *       given address. */
+void Cache::load(long long address) {}
+ 
+/**************************************
+ * Func: modify()
+ * Desc: Performs modify operation at the
+ *       given address. */
+void Cache::modify(long long address) {}
+ 
+/**************************************
+ * GETTERS AND SETTERS */
+long long Cache::get_hits() {
+    return this->hits;
 }
 
+long long Cache::get_misses() {
+    return this->misses;
+}
+
+long long Cache::get_evictions() {
+    return this->evictions;
+}
