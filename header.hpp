@@ -8,6 +8,8 @@
 
 using namespace std;
 
+// Result for caches
+enum RESULT { MISS, HIT, EVICTION };
 
 /****************************************
  * Node struct used in LRU_Cache
@@ -15,9 +17,8 @@ using namespace std;
 struct Node {
     Node* next;
     Node* prev;
-    int val;
-    int key;
-    Node(Node* n, Node* p, int v, int k) : next(n), prev(p), val(v), key(k) {};
+    int tag;
+    Node(Node* n, Node* p, int t) : next(n), prev(p), tag(t) {};
 };
 
 /****************************************
@@ -29,12 +30,12 @@ class LRU_Cache {
         Node* tail;
         int capacity;
         int size;
-        unordered_map<int, Node*> where;
+        unordered_map<long long, Node*> where;
 
     public:
         LRU_Cache(int); 
-        bool get(int, int);
-        bool put(int, int);
+        enum RESULT get(long long);
+        enum RESULT put(long long);
 };
 
 /****************************************
@@ -59,9 +60,9 @@ class Cache {
     public:
         bool setup(fstream&);
         int cycles();
-        void load(long long);
-        void modify(long long);
-        void store(long long);
+        int load(long long);
+        int modify(long long);
+        int store(long long);
         long long get_hits();
         long long get_misses();
         long long get_evictions();

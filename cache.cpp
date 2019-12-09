@@ -19,6 +19,9 @@ bool Cache::setup(fstream& config) {
     config >> write_policy;
     config >> access_cycles;
     if (cin.fail()) return false;
+    hits = misses = evictions = 0;
+    // Make minicaches
+    index = vector<LRU_Cache>(num_sets, LRU_Cache(associativity));
     return true;
 }
 
@@ -26,19 +29,21 @@ bool Cache::setup(fstream& config) {
  * Func: store()
  * Desc: Performs store operation at the
  *       given address. */
-void Cache::store(long long address) {}
+int Cache::store(long long address) {
+    
+}
  
 /**************************************
  * Func: load()
  * Desc: Performs load operation at the
  *       given address. */
-void Cache::load(long long address) {}
+int Cache::load(long long address) {}
  
 /**************************************
  * Func: modify()
  * Desc: Performs modify operation at the
  *       given address. */
-void Cache::modify(long long address) {}
+int Cache::modify(long long address) {}
  
 /**************************************
  * GETTERS AND SETTERS */
