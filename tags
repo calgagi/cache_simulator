@@ -3,23 +3,74 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+!_TAG_PROGRAM_VERSION	5.8	//
 COMPILER	Makefile	/^COMPILER = g++ --std=c++11$/;"	m
 Cache	header.hpp	/^class Cache {$/;"	c
+DIRTYEVICTION	header.hpp	/^enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };$/;"	e	enum:RESULT
+EVICTION	header.hpp	/^enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };$/;"	e	enum:RESULT
+HIT	header.hpp	/^enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };$/;"	e	enum:RESULT
+LRU_Cache	header.hpp	/^class LRU_Cache : public Poly_Cache {$/;"	c
+LRU_Cache	lru_cache.cpp	/^LRU_Cache::LRU_Cache(int c) {$/;"	f	class:LRU_Cache
+MISS	header.hpp	/^enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };$/;"	e	enum:RESULT
+Node	header.hpp	/^    Node(Node* n, Node* p, int t, bool d) : next(n), prev(p), tag(t), dirty(d) {};$/;"	f	struct:Node
+Node	header.hpp	/^struct Node {$/;"	s
+Poly_Cache	header.hpp	/^        Poly_Cache() {};$/;"	f	class:Poly_Cache
+Poly_Cache	header.hpp	/^        Poly_Cache(int c) {};$/;"	f	class:Poly_Cache
+Poly_Cache	header.hpp	/^class Poly_Cache {$/;"	c
+RESULT	header.hpp	/^enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };$/;"	g
+Random_Cache	header.hpp	/^class Random_Cache : public Poly_Cache {$/;"	c
+Random_Cache	random_cache.cpp	/^Random_Cache::Random_Cache(int c) {$/;"	f	class:Random_Cache
 Simulator	header.hpp	/^class Simulator {$/;"	c
 Simulator	simulator.cpp	/^Simulator::Simulator(fstream& config) {$/;"	f	class:Simulator
 access_cycles	header.hpp	/^        int access_cycles;$/;"	m	class:Cache
 associativity	header.hpp	/^        int associativity;$/;"	m	class:Cache
 block_size	header.hpp	/^        int block_size;$/;"	m	class:Cache
-caches	header.hpp	/^        vector<Cache> caches;$/;"	m	class:Simulator
-complete	simulator.cpp	/^void complete() {$/;"	f
-cycles	cache.cpp	/^int cycles() {$/;"	f
-execute	simulator.cpp	/^bool execute(string const& line, char const& instr, string const& addr) {$/;"	f
+cache	header.hpp	/^        Cache cache;$/;"	m	class:Simulator
+capacity	header.hpp	/^        int capacity;$/;"	m	class:LRU_Cache
+capacity	header.hpp	/^        int capacity;$/;"	m	class:Random_Cache
+complete	simulator.cpp	/^void Simulator::complete() {$/;"	f	class:Simulator
+create_output	simulator.cpp	/^bool Simulator::create_output(string const& filename) {$/;"	f	class:Simulator
+cycles	header.hpp	/^        long long cycles, reads, writes;$/;"	m	class:Cache
+dirty	header.hpp	/^    bool dirty;$/;"	m	struct:Node
+evictions	header.hpp	/^        long long hits, misses, evictions;$/;"	m	class:Cache
+execute	simulator.cpp	/^bool Simulator::execute(string const& line, char const& instr, string const& addr) {$/;"	f	class:Simulator
+get	lru_cache.cpp	/^enum RESULT LRU_Cache::get(long long tag, bool write_back, bool store_bit) {$/;"	f	class:LRU_Cache
+get	random_cache.cpp	/^enum RESULT Random_Cache::get(long long tag, bool dirt, bool _) {$/;"	f	class:Random_Cache
+get_evictions	cache.cpp	/^long long Cache::get_evictions() {$/;"	f	class:Cache
+get_hits	cache.cpp	/^long long Cache::get_hits() {$/;"	f	class:Cache
+get_misses	cache.cpp	/^long long Cache::get_misses() {$/;"	f	class:Cache
+get_total_cycles	cache.cpp	/^long long Cache::get_total_cycles() {$/;"	f	class:Cache
+get_total_reads	cache.cpp	/^long long Cache::get_total_reads() {$/;"	f	class:Cache
+get_total_writes	cache.cpp	/^long long Cache::get_total_writes() {$/;"	f	class:Cache
+head	header.hpp	/^        Node* head;$/;"	m	class:LRU_Cache
+hits	header.hpp	/^        long long hits, misses, evictions;$/;"	m	class:Cache
+index	header.hpp	/^        vector<Poly_Cache*> index;$/;"	m	class:Cache
+load	cache.cpp	/^string Cache::load(long long address) {$/;"	f	class:Cache
 main	driver.cpp	/^int main(int argc, char** argv) {$/;"	f
+main_mem	header.hpp	/^        long long main_mem;$/;"	m	class:Cache
 main_mem_access_cycles	header.hpp	/^        long long main_mem_access_cycles;$/;"	m	class:Simulator
+misses	header.hpp	/^        long long hits, misses, evictions;$/;"	m	class:Cache
+modify	cache.cpp	/^string Cache::modify(long long address, string const& command) {$/;"	f	class:Cache
+next	header.hpp	/^    Node* next;$/;"	m	struct:Node
 num_caches	header.hpp	/^        int num_caches;$/;"	m	class:Simulator
 num_sets	header.hpp	/^        int num_sets;$/;"	m	class:Cache
+nums	header.hpp	/^        vector<pair<long long, int>> nums;$/;"	m	class:Random_Cache
 output	header.hpp	/^        fstream output;$/;"	m	class:Simulator
+prev	header.hpp	/^    Node* prev;$/;"	m	struct:Node
+put	lru_cache.cpp	/^enum RESULT LRU_Cache::put(long long tag, bool write_back, bool store_bit) {$/;"	f	class:LRU_Cache
+put	random_cache.cpp	/^enum RESULT Random_Cache::put(long long tag, bool write_back, bool store) {$/;"	f	class:Random_Cache
+reads	header.hpp	/^        long long cycles, reads, writes;$/;"	m	class:Cache
 replacement_policy	header.hpp	/^        bool replacement_policy;$/;"	m	class:Cache
-setup	cache.cpp	/^bool Cache::setup(fstream& config) {$/;"	f	class:Cache
+setup	cache.cpp	/^bool Cache::setup(fstream& config, long long main_mem) {$/;"	f	class:Cache
+size	header.hpp	/^        int size;$/;"	m	class:LRU_Cache
+size	header.hpp	/^        int size;$/;"	m	class:Random_Cache
+store	cache.cpp	/^string Cache::store(long long address) {$/;"	f	class:Cache
+tag	header.hpp	/^    int tag;$/;"	m	struct:Node
+tail	header.hpp	/^        Node* tail;$/;"	m	class:LRU_Cache
+total_cycles	header.hpp	/^        int total_writes, total_cycles, total_reads;$/;"	m	class:Simulator
+total_reads	header.hpp	/^        int total_writes, total_cycles, total_reads;$/;"	m	class:Simulator
+total_writes	header.hpp	/^        int total_writes, total_cycles, total_reads;$/;"	m	class:Simulator
+where	header.hpp	/^        unordered_map<long long, Node*> where;$/;"	m	class:LRU_Cache
+where	header.hpp	/^        unordered_map<long long,int> where;$/;"	m	class:Random_Cache
 write_policy	header.hpp	/^        bool write_policy;$/;"	m	class:Cache
+writes	header.hpp	/^        long long cycles, reads, writes;$/;"	m	class:Cache

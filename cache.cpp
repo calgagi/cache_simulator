@@ -43,7 +43,7 @@ string Cache::store(long long address) {
     string impact = "";
     
     cycles += access_cycles;
-    int result = index[i]->get(tag, (bool) this->write_policy);   
+    int result = index[i]->get(tag, (bool) this->write_policy, true);   
     if (result == MISS) {
         impact += "miss ";
         misses++;
@@ -87,7 +87,7 @@ string Cache::load(long long address) {
         impact += "miss ";
         misses++;
         cycles += main_mem;
-        result = index[i]->put(tag, (bool) this->write_policy);
+        result = index[i]->put(tag, false);
         reads++;
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";

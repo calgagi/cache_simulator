@@ -21,9 +21,9 @@ LRU_Cache::LRU_Cache(int c) {
  * Func: get()
  * Desc: Returns HIT if in cache, MISS if not
  */
-enum RESULT LRU_Cache::get(long long tag, bool write_back) {
+enum RESULT LRU_Cache::get(long long tag, bool write_back, bool store_bit) {
     if (this->where.find(tag) != this->where.end()) {
-        this->put(tag, write_back);
+        this->put(tag, write_back, store_bit);
         return HIT;
     } else return MISS;
 }
