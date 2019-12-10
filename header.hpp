@@ -28,7 +28,7 @@ struct Node {
 class Poly_Cache {
     public:
         virtual enum RESULT get(long long, bool) = 0;
-        virtual enum RESULT put(long long, bool) = 0;
+        virtual enum RESULT put(long long, bool, bool = false) = 0;
         Poly_Cache() {};
         Poly_Cache(int c) {};
 };
@@ -47,7 +47,7 @@ class LRU_Cache : public Poly_Cache {
     public:
         LRU_Cache(int); 
         enum RESULT get(long long, bool = false);
-        enum RESULT put(long long, bool = false);
+        enum RESULT put(long long, bool = false, bool = false);
 };
 
 /****************************************
@@ -62,8 +62,8 @@ class Random_Cache : public Poly_Cache {
 
     public:
         Random_Cache(int);
-        enum RESULT get(long long, bool);
-        enum RESULT put(long long, bool);
+        enum RESULT get(long long, bool = false);
+        enum RESULT put(long long, bool = false, bool = false);
 };
 
 
@@ -92,7 +92,7 @@ class Cache {
         bool setup(fstream&, long long);
         string load(long long);
         string modify(long long, string const& command);
-        string store(long long, bool = false);
+        string store(long long);
 
         // Getters
         long long get_hits();

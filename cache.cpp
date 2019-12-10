@@ -20,7 +20,7 @@ bool Cache::setup(fstream& config, long long main_mem) {
     config >> write_policy;
     config >> access_cycles;
     if (cin.fail()) return false;
-    cycles = hits = misses = evictions = 0;
+    cycles = hits = writes = reads = misses = evictions = 0;
     // Make minicaches
     if (replacement_policy == 1)
         for (int j = 0; j < num_sets; j++)
@@ -36,7 +36,7 @@ bool Cache::setup(fstream& config, long long main_mem) {
  * Func: store()
  * Desc: Performs store operation at the
  *       given address. */
-string Cache::store(long long address, bool MODIFY) {
+string Cache::store(long long address) {
     long long i = (address / block_size) % num_sets;     
     long long tag = (address / num_sets) / block_size; 
     long long prev = cycles;
@@ -50,7 +50,7 @@ string Cache::store(long long address, bool MODIFY) {
         cycles += main_mem;
         cycles += access_cycles;
         reads++;
-        result = index[i]->put(tag, (bool) this->write_policy);
+        result = index[i]->put(tag, (bool) this->write_policy, true);
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";
             evictions++;
@@ -111,7 +111,7 @@ string Cache::load(long long address) {
  *       given address. */
 string Cache::modify(long long address, string const& command) {
     string f = load(address) + "\n";
-    string s = command + " " + store(address, true); 
+    string s = command + " " + store(address); 
     return f + s;
 }
  

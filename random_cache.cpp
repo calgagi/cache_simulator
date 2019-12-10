@@ -23,7 +23,7 @@ Random_Cache::Random_Cache(int c) {
  *       If not in Cache: MISS
  *       Some tricky stuff to do it in O(1).
  */
-enum RESULT Random_Cache::put(long long tag, bool _) {
+enum RESULT Random_Cache::put(long long tag, bool write_back, bool store) {
     if (where.count(tag) == 1) return HIT;
     bool evict = false, dirty = false;
     if (capacity == size) {
@@ -37,7 +37,7 @@ enum RESULT Random_Cache::put(long long tag, bool _) {
         size--;
         evict = true;
     }
-    nums.push_back({tag, false});
+    nums.push_back({tag, (write_back && store)});
     size++;
     where[tag] = size-1;
     return (evict ? (dirty ? DIRTYEVICTION : EVICTION) : MISS);
@@ -49,7 +49,7 @@ enum RESULT Random_Cache::put(long long tag, bool _) {
  * Func: get()
  * Desc: Returns HIT if in cache, MISS if not
  */
-enum RESULT Random_Cache::get(long long tag, bool dirt = false) {
+enum RESULT Random_Cache::get(long long tag, bool dirt) {
     enum RESULT result = (this->where.count(tag) == 1) ? HIT : MISS;
     if (result == HIT)
         nums[where[tag]].second = dirt;
