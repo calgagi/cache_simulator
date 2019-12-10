@@ -8,8 +8,8 @@
 
 using namespace std;
 
-// Result for caches
-enum RESULT { MISS, HIT, EVICTION };
+/****************************************/
+enum RESULT { MISS, HIT, EVICTION, DIRTYEVICTION };
 
 /****************************************
  * Node struct used in LRU_Cache
@@ -18,25 +18,55 @@ struct Node {
     Node* next;
     Node* prev;
     int tag;
-    Node(Node* n, Node* p, int t) : next(n), prev(p), tag(t) {};
+    bool dirty;
+    Node(Node* n, Node* p, int t, bool d) : next(n), prev(p), tag(t), dirty(d) {};
+};
+
+/****************************************
+ * Poly_Cache Class
+ ****************************************/
+class Poly_Cache {
+    public:
+        virtual enum RESULT get(long long, bool) = 0;
+        virtual enum RESULT put(long long, bool) = 0;
+        Poly_Cache() {};
+        Poly_Cache(int c) {};
 };
 
 /****************************************
  * LRU_Cache Class
  ****************************************/
-class LRU_Cache {
+class LRU_Cache : public Poly_Cache {
     private:
         Node* head;
         Node* tail;
         int capacity;
         int size;
         unordered_map<long long, Node*> where;
+        int mode;
 
     public:
         LRU_Cache(int); 
-        enum RESULT get(long long);
-        enum RESULT put(long long);
+        enum RESULT get(long long, bool);
+        enum RESULT put(long long, bool);
 };
+
+/****************************************
+ * Random_Cache Class
+ ****************************************/
+class Random_Cache : public Poly_Cache {
+    private:
+        unordered_map<long long,int> where;
+        vector<pair<long long, int>> nums;
+        int capacity;
+        int size;
+
+    public:
+        Random_Cache(int);
+        enum RESULT get(long long, bool);
+        enum RESULT put(long long, bool);
+};
+
 
 /****************************************
  * Cache Class
@@ -50,22 +80,29 @@ class Cache {
         bool replacement_policy;
         bool write_policy;
         int access_cycles;
+        long long main_mem;
 
         // Summary vars
         long long hits, misses, evictions;
+        long long cycles, reads, writes;
 
         // O(1) caches by index
-        vector<LRU_Cache> index;
+        vector<Poly_Cache*> index;
 
     public:
-        bool setup(fstream&);
-        int cycles();
-        int load(long long);
-        int modify(long long);
-        int store(long long);
+        bool setup(fstream&, long long);
+        string load(long long);
+        string modify(long long, string const& command);
+        string store(long long);
+
+        // Getters
         long long get_hits();
         long long get_misses();
         long long get_evictions();
+        long long get_cycles();
+        long long get_total_cycles();
+        long long get_total_reads();
+        long long get_total_writes();
 };
 
 

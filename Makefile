@@ -5,8 +5,9 @@
 ##########################################################
 COMPILER = g++ --std=c++11
 
-cache_simulator: driver.o simulator.o cache.o lru_cache.o
-	$(COMPILER) driver.o simulator.o cache.o lru_cache.o -o cache_simulator
+cache_simulator: driver.o simulator.o cache.o lru_cache.o random_cache.o
+	$(COMPILER) driver.o simulator.o cache.o lru_cache.o random_cache.o -o cache_simulator
+	rm -f *.o 
 
 driver.o: driver.cpp
 	$(COMPILER) -c driver.cpp
@@ -20,5 +21,8 @@ cache.o: cache.cpp
 lru_cache.o: lru_cache.cpp
 	$(COMPILER) -c lru_cache.cpp
 
+random_cache.o: random_cache.cpp
+	$(COMPILER) -c random_cache.cpp
+
 clean:
-	rm -f *.o sim_cache
+	rm -f *.o cache_simulator 

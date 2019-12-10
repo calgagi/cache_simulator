@@ -11,7 +11,8 @@
  *       variables and then setting up
  *       cache. Returns true if set up successfully. 
  *       */
-bool Cache::setup(fstream& config) {
+bool Cache::setup(fstream& config, long long main_mem) {
+    this->main_mem = main_mem;
     config >> num_sets;
     config >> block_size;
     config >> associativity;
@@ -19,9 +20,12 @@ bool Cache::setup(fstream& config) {
     config >> write_policy;
     config >> access_cycles;
     if (cin.fail()) return false;
-    hits = misses = evictions = 0;
+    cycles = hits = misses = evictions = 0;
     // Make minicaches
-    index = vector<LRU_Cache>(num_sets, LRU_Cache(associativity));
+    if (replacement_policy == 1)
+        index = vector<Poly_Cache*>(num_sets, new LRU_Cache(associativity));
+    else
+        index = vector<Poly_Cache*>(num_sets, new Random_Cache(associativity));
     return true;
 }
 
@@ -29,21 +33,77 @@ bool Cache::setup(fstream& config) {
  * Func: store()
  * Desc: Performs store operation at the
  *       given address. */
-int Cache::store(long long address) {
+string Cache::store(long long address) {
+    // Calculate address of set
+    long long i = (address / block_size) % num_sets;     
+    // Calculate tag
+    long long tag = (address / num_sets) / block_size; 
+    long long prev = cycles;
+    string res = "L1 ";
+    string second = " ";
     
+    int result = index[i]->get(tag, (bool) this->write_policy);   
+    if (result == MISS) {
+        second += "miss ";
+        cycles += main_mem;
+        cycles += access_cycles;
+        result = index[i]->put(tag, (bool) this->write_policy);
+        if (result == EVICTION || result == DIRTYEVICTION) {
+            second += "eviction ";
+            if (result == DIRTYEVICTION) {
+                cycles += main_mem;
+                cycles += access_cycles;
+            }
+        }       
+    } else {
+        second = "hit";
+    }
+    if (write_policy == 0) {
+        cycles += main_mem; 
+        cycles += access_cycles;
+    } else {
+        cycles += access_cycles;
+    }
+    return res + to_string(cycles - prev) + second;
 }
  
 /**************************************
  * Func: load()
  * Desc: Performs load operation at the
  *       given address. */
-int Cache::load(long long address) {}
+string Cache::load(long long address) {
+    long long i = (address / block_size) % num_sets;
+    long long tag = (address / num_sets) / block_size;
+    long long prev = cycles;
+    string res = "L1 ";
+    string second = " ";
+     
+    int result = index[i]->get(tag, false);
+    if (result == MISS) {
+        second += "miss ";
+        cycles += main_mem;
+        cycles += access_cycles;
+        result = index[i]->put(tag, (bool) this->write_policy);
+        if (result == EVICTION || result == DIRTYEVICTION) {
+            second += "eviction ";
+            if (result == DIRTYEVICTION) {
+                cycles += main_mem;
+                cycles += access_cycles;
+            }
+        } 
+    } else {
+        second = "hit";
+    }
+    return res + to_string(cycles - prev) + second;
+}
  
 /**************************************
  * Func: modify()
  * Desc: Performs modify operation at the
  *       given address. */
-int Cache::modify(long long address) {}
+string Cache::modify(long long address, string const& command) {
+    return "MODIFY";
+}
  
 /**************************************
  * GETTERS AND SETTERS */
@@ -57,4 +117,16 @@ long long Cache::get_misses() {
 
 long long Cache::get_evictions() {
     return this->evictions;
+}
+
+long long Cache::get_total_cycles() {
+    return this->cycles;
+}
+
+long long Cache::get_total_writes() {
+    return this->writes;
+}
+
+long long Cache::get_total_reads() {
+    return this->reads;
 }

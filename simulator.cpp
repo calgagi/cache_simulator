@@ -14,7 +14,7 @@ Simulator::Simulator(fstream& config) {
     config >> num_caches;
     config >> main_mem_access_cycles;
     total_writes = total_reads = total_cycles = 0;
-    if (!cache.setup(config)) {
+    if (!cache.setup(config, main_mem_access_cycles)) {
         cerr << "simulator: constructor: Bad config file input" << endl;
         exit(0);
     }
@@ -44,9 +44,11 @@ bool Simulator::execute(string const& line, char const& instr, string const& add
     } else return false;
 
     output << line << " ";
-    if (instr == 'S') cache.store(address);
-    else if (instr == 'L') cache.load(address);
-    else if (instr == 'M') cache.modify(address);
+    string out;
+    if (instr == 'S') out = cache.store(address);
+    else if (instr == 'L') out = cache.load(address);
+    else if (instr == 'M') out = cache.modify(address, line);
+    output << out << endl;
     return true;
 }
 
@@ -60,9 +62,9 @@ void Simulator::complete() {
     output << "Misses: " << cache.get_misses() << " ";
     output << "Evictions: " << cache.get_evictions() << " ";
     output << endl;
-    output << "Cycles:" << this->total_cycles << " ";
-    output << "Reads:" << this->total_reads << " " ;
-    output << "Writes: " << this->total_writes << " ";
+    output << "Cycles:" << cache.get_total_cycles() << " ";
+    output << "Reads:" << cache.get_total_reads() << " " ;
+    output << "Writes: " << cache.get_total_writes() << " ";
     output << endl;
 }
 
