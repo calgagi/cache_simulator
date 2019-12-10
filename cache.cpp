@@ -19,13 +19,17 @@ bool Cache::setup(fstream& config, long long main_mem) {
     config >> replacement_policy;
     config >> write_policy;
     config >> access_cycles;
+    cout << main_mem << " " << access_cycles << endl;
     if (cin.fail()) return false;
     cycles = hits = misses = evictions = 0;
     // Make minicaches
     if (replacement_policy == 1)
-        index = vector<Poly_Cache*>(num_sets, new LRU_Cache(associativity));
+        for (int j = 0; j < num_sets; j++)
+            index.push_back(new LRU_Cache(associativity));
     else
-        index = vector<Poly_Cache*>(num_sets, new Random_Cache(associativity));
+        for (int j = 0; j < num_sets; j++)
+            index.push_back(new Random_Cache(associativity));
+
     return true;
 }
 
@@ -33,38 +37,40 @@ bool Cache::setup(fstream& config, long long main_mem) {
  * Func: store()
  * Desc: Performs store operation at the
  *       given address. */
-string Cache::store(long long address) {
-    // Calculate address of set
+string Cache::store(long long address, bool MODIFY) {
+    writes++;
     long long i = (address / block_size) % num_sets;     
-    // Calculate tag
     long long tag = (address / num_sets) / block_size; 
+    cout << "STORE " << i << " " << tag << endl;
     long long prev = cycles;
-    string res = "L1 ";
-    string second = " ";
+    string impact = "";
     
+    cycles += access_cycles;
     int result = index[i]->get(tag, (bool) this->write_policy);   
     if (result == MISS) {
-        second += "miss ";
+        impact += "miss ";
+        misses++;
         cycles += main_mem;
-        cycles += access_cycles;
         result = index[i]->put(tag, (bool) this->write_policy);
         if (result == EVICTION || result == DIRTYEVICTION) {
-            second += "eviction ";
+            impact += "eviction ";
+            evictions++;
             if (result == DIRTYEVICTION) {
                 cycles += main_mem;
                 cycles += access_cycles;
             }
         }       
     } else {
-        second = "hit";
+        impact = "hit";
+        hits++;
     }
-    if (write_policy == 0) {
-        cycles += main_mem; 
+    if (write_policy == 0 && MODIFY == false) {
         cycles += access_cycles;
-    } else {
-        cycles += access_cycles;
+        cycles += main_mem;
+    } else if (write_policy == 0) {
+        cycles += main_mem;
     }
-    return res + to_string(cycles - prev) + second;
+    return to_string(cycles - prev) + " L1 " + impact;
 }
  
 /**************************************
@@ -75,26 +81,30 @@ string Cache::load(long long address) {
     long long i = (address / block_size) % num_sets;
     long long tag = (address / num_sets) / block_size;
     long long prev = cycles;
-    string res = "L1 ";
-    string second = " ";
-     
+    string impact = "";
+    cout << "LOAD " << i << " " << tag << endl;
+    reads++;
+    
+    cycles += access_cycles; 
     int result = index[i]->get(tag, false);
     if (result == MISS) {
-        second += "miss ";
+        impact += "miss ";
+        misses++;
         cycles += main_mem;
-        cycles += access_cycles;
         result = index[i]->put(tag, (bool) this->write_policy);
         if (result == EVICTION || result == DIRTYEVICTION) {
-            second += "eviction ";
+            impact += "eviction ";
+            evictions++;
             if (result == DIRTYEVICTION) {
                 cycles += main_mem;
                 cycles += access_cycles;
             }
         } 
     } else {
-        second = "hit";
+        impact = "hit";
+        hits++;
     }
-    return res + to_string(cycles - prev) + second;
+    return to_string(cycles - prev) + " L1 " + impact;
 }
  
 /**************************************
@@ -102,7 +112,9 @@ string Cache::load(long long address) {
  * Desc: Performs modify operation at the
  *       given address. */
 string Cache::modify(long long address, string const& command) {
-    return "MODIFY";
+    string f = load(address) + "\n";
+    string s = command + " " + store(address, true); 
+    return f + s;
 }
  
 /**************************************

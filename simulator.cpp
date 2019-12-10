@@ -58,13 +58,13 @@ bool Simulator::execute(string const& line, char const& instr, string const& add
  *       simulation summary. */
 void Simulator::complete() {
     output << "L1"  << " Cache: ";
-    output << "Hits: " << cache.get_hits() << " ";
-    output << "Misses: " << cache.get_misses() << " ";
-    output << "Evictions: " << cache.get_evictions() << " ";
+    output << "Hits:" << cache.get_hits() << " ";
+    output << "Misses:" << cache.get_misses() << " ";
+    output << "Evictions:" << cache.get_evictions() << " ";
     output << endl;
     output << "Cycles:" << cache.get_total_cycles() << " ";
     output << "Reads:" << cache.get_total_reads() << " " ;
-    output << "Writes: " << cache.get_total_writes() << " ";
+    output << "Writes:" << cache.get_total_writes() << " ";
     output << endl;
 }
 

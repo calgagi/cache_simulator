@@ -43,12 +43,11 @@ class LRU_Cache : public Poly_Cache {
         int capacity;
         int size;
         unordered_map<long long, Node*> where;
-        int mode;
 
     public:
         LRU_Cache(int); 
-        enum RESULT get(long long, bool);
-        enum RESULT put(long long, bool);
+        enum RESULT get(long long, bool = false);
+        enum RESULT put(long long, bool = false);
 };
 
 /****************************************
@@ -93,7 +92,7 @@ class Cache {
         bool setup(fstream&, long long);
         string load(long long);
         string modify(long long, string const& command);
-        string store(long long);
+        string store(long long, bool = false);
 
         // Getters
         long long get_hits();

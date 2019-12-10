@@ -21,8 +21,8 @@ LRU_Cache::LRU_Cache(int c) {
  * Func: get()
  * Desc: Returns HIT if in cache, MISS if not
  */
-enum RESULT LRU_Cache::get(long long tag, bool write_back = false) {
-    if (this->where.count(tag)) {
+enum RESULT LRU_Cache::get(long long tag, bool write_back) {
+    if (this->where.find(tag) != this->where.end()) {
         this->put(tag, write_back == true);
         return HIT;
     } else return MISS;
@@ -35,9 +35,9 @@ enum RESULT LRU_Cache::get(long long tag, bool write_back = false) {
  *       If not in Cache and cache is full: EVICT
  *       If not in Cache: MISS
  */
-enum RESULT LRU_Cache::put(long long tag, bool set_dirty = false) {
+enum RESULT LRU_Cache::put(long long tag, bool set_dirty) {
     bool evict = false, hit = false, dirty = false;
-    if (this->where.count(tag)) {
+    if (this->where.find(tag) != this->where.end()) {
         Node* removed = where[tag];
         if (removed->prev)
             removed->prev->next = removed->next;
@@ -72,7 +72,7 @@ enum RESULT LRU_Cache::put(long long tag, bool set_dirty = false) {
         tail = add;
         head = add;
     }
-    size++;
+    this->size++;
     if (hit) return HIT;
     if (evict && dirty) return DIRTYEVICTION;
     if (evict) return EVICTION;
