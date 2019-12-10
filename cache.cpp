@@ -19,7 +19,6 @@ bool Cache::setup(fstream& config, long long main_mem) {
     config >> replacement_policy;
     config >> write_policy;
     config >> access_cycles;
-    cout << main_mem << " " << access_cycles << endl;
     if (cin.fail()) return false;
     cycles = hits = misses = evictions = 0;
     // Make minicaches
@@ -38,10 +37,8 @@ bool Cache::setup(fstream& config, long long main_mem) {
  * Desc: Performs store operation at the
  *       given address. */
 string Cache::store(long long address, bool MODIFY) {
-    writes++;
     long long i = (address / block_size) % num_sets;     
     long long tag = (address / num_sets) / block_size; 
-    cout << "STORE " << i << " " << tag << endl;
     long long prev = cycles;
     string impact = "";
     
@@ -51,11 +48,14 @@ string Cache::store(long long address, bool MODIFY) {
         impact += "miss ";
         misses++;
         cycles += main_mem;
+        cycles += access_cycles;
+        reads++;
         result = index[i]->put(tag, (bool) this->write_policy);
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";
             evictions++;
             if (result == DIRTYEVICTION) {
+                writes++;
                 cycles += main_mem;
                 cycles += access_cycles;
             }
@@ -64,10 +64,8 @@ string Cache::store(long long address, bool MODIFY) {
         impact = "hit";
         hits++;
     }
-    if (write_policy == 0 && MODIFY == false) {
-        cycles += access_cycles;
-        cycles += main_mem;
-    } else if (write_policy == 0) {
+    if (write_policy == 0) {
+        writes++;
         cycles += main_mem;
     }
     return to_string(cycles - prev) + " L1 " + impact;
@@ -82,8 +80,6 @@ string Cache::load(long long address) {
     long long tag = (address / num_sets) / block_size;
     long long prev = cycles;
     string impact = "";
-    cout << "LOAD " << i << " " << tag << endl;
-    reads++;
     
     cycles += access_cycles; 
     int result = index[i]->get(tag, false);
@@ -92,10 +88,12 @@ string Cache::load(long long address) {
         misses++;
         cycles += main_mem;
         result = index[i]->put(tag, (bool) this->write_policy);
+        reads++;
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";
             evictions++;
             if (result == DIRTYEVICTION) {
+                writes++;
                 cycles += main_mem;
                 cycles += access_cycles;
             }
