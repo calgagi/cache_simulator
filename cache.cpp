@@ -49,13 +49,11 @@ string Cache::store(long long address) {
         misses++;
         cycles += main_mem;
         cycles += access_cycles;
-        reads++;
         result = index[i]->put(tag, (bool) this->write_policy, true);
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";
             evictions++;
             if (result == DIRTYEVICTION) {
-                writes++;
                 cycles += main_mem;
                 cycles += access_cycles;
             }
@@ -65,9 +63,9 @@ string Cache::store(long long address) {
         hits++;
     }
     if (write_policy == 0) {
-        writes++;
         cycles += main_mem;
     }
+    writes++;
     return to_string(cycles - prev) + " L1 " + impact;
 }
  
@@ -88,12 +86,10 @@ string Cache::load(long long address) {
         misses++;
         cycles += main_mem;
         result = index[i]->put(tag, false);
-        reads++;
         if (result == EVICTION || result == DIRTYEVICTION) {
             impact += "eviction ";
             evictions++;
             if (result == DIRTYEVICTION) {
-                writes++;
                 cycles += main_mem;
                 cycles += access_cycles;
             }
@@ -102,6 +98,7 @@ string Cache::load(long long address) {
         impact = "hit";
         hits++;
     }
+    reads++;
     return to_string(cycles - prev) + " L1 " + impact;
 }
  
